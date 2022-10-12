@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My first three.js app</title>
+    <style>
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="module">
+      import * as THREE from "https://cdn.skypack.dev/three@0.145";
+
+      const scene = new THREE.Scene();
+
+      // PerspectiveCamera 透视摄像机
+      // 75: 视野角度(FOV) 在显示器上看到的场景的范围
+      // 0.1: 长宽比(aspect ratio)
+      // 1000： 近截面(near)和远截面(far)
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000,
+        1000
+      );
+
+      // WebGLRenderer 渲染器
+      const renderer = new THREE.WebGLRenderer();
+
+      // 设置渲染器尺寸
+      // false: 以较低的分辨率来渲染
+      // renderer.setSize(window.innerWidth / 2, window.innerHeight / 2, false);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      // 将渲染器的dom元素添加到HTML文档中
+      document.body.appendChild(renderer.domElement);
+
+      const geometry = new THREE.BoxGeometry(1, 1, 1);
+      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+      const cube = new THREE.Mesh(geometry, material);
+      scene.add(cube);
+
+      camera.position.z = 5;
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+    </script>
+  </body>
+</html>
