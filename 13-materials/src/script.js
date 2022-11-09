@@ -9,17 +9,30 @@ const gui = new dat.GUI();
  * Textures
  */
 const textureLoader = new THREE.TextureLoader();
-const doorColorTexture = textureLoader.load("/textures/door/color.jpg");
-const doorAlphaTexture = textureLoader.load("/textures/door/alpha.jpg");
-const doorAmbientOcclusionTexture = textureLoader.load(
-  "/textures/door/ambientOcclusion.jpg"
-);
-const doorHeightTexture = textureLoader.load("/textures/door/height.jpg");
-const doorNormalTexture = textureLoader.load("/textures/door/normal.jpg");
-const doorMetalnessTexture = textureLoader.load("/textures/door/metalness.jpg");
-const doorRoughnessTexture = textureLoader.load("/textures/door/roughness.jpg");
-const doorMatcapsTexture = textureLoader.load("/textures/matcaps/1.png");
-const doorGradientsTexture = textureLoader.load("/textures/gradients/3.jpg");
+const cubeTextureLoader = new THREE.CubeTextureLoader();
+// const doorColorTexture = textureLoader.load("/textures/door/color.jpg");
+// const doorAlphaTexture = textureLoader.load("/textures/door/alpha.jpg");
+// const doorAmbientOcclusionTexture = textureLoader.load(
+//   "/textures/door/ambientOcclusion.jpg"
+// );
+// const doorHeightTexture = textureLoader.load("/textures/door/height.jpg");
+// const doorNormalTexture = textureLoader.load("/textures/door/normal.jpg");
+// const doorMetalnessTexture = textureLoader.load("/textures/door/metalness.jpg");
+// const doorRoughnessTexture = textureLoader.load("/textures/door/roughness.jpg");
+// const doorMatcapsTexture = textureLoader.load("/textures/matcaps/1.png");
+const gradientsTexture = textureLoader.load("/textures/gradients/3.jpg");
+gradientsTexture.minFilter = THREE.NearestFilter;
+gradientsTexture.magFilter = THREE.NearestFilter;
+gradientsTexture.generateMipmaps = false;
+
+const enviromentTexture = cubeTextureLoader.load([
+  "/textures/environmentMaps/0/px.jpg",
+  "/textures/environmentMaps/0/nx.jpg",
+  "/textures/environmentMaps/0/py.jpg",
+  "/textures/environmentMaps/0/ny.jpg",
+  "/textures/environmentMaps/0/pz.jpg",
+  "/textures/environmentMaps/0/nz.jpg",
+]);
 
 /**
  * Base
@@ -36,9 +49,9 @@ const scene = new THREE.Scene();
 // const material = new THREE.MeshBasicMaterial();
 // const material = new THREE.MeshNormalMaterial();
 const material = new THREE.MeshStandardMaterial();
-material.metalness = 0.45;
-material.roughness = 0.65;
-// material.matcap = doorMatcapsTexture;
+material.metalness = 0.7;
+material.roughness = 0.2;
+// material.matcap = doorColorTexture;
 // material.color.set("#ff00ff");
 // material.map = doorColorTexture;
 // material.color = new THREE.Color("purple");
@@ -46,19 +59,21 @@ material.roughness = 0.65;
 // material.opacity = 0.5;
 // material.transparent = true;
 // material.flatShading = true;
+material.envMap = enviromentTexture;
 
-gui.add(material, "metalness").min(0).max(1);
+gui.add(material, "metalness").min(0).max(1).step(0.001);
 
 // material.alphaMap = doorAlphaTexture;
 
 // material.map = doorColorTexture;
 
 const sphere = new THREE.Mesh(
-  new THREE.SphereBufferGeometry(0.5, 16, 16),
+  new THREE.SphereBufferGeometry(0.5, 64, 64),
   material
 );
 
 sphere.position.x = -1.5;
+sphere.geometry.setAttribute;
 
 const plane = new THREE.Mesh(new THREE.PlaneBufferGeometry(1, 1), material);
 
