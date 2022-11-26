@@ -46,7 +46,7 @@ gui
   .max(10)
   .step(0.001)
   .onChange(() => {
-    console.log("do");
+    // console.log("do");
     updateAllMaterials();
   });
 
@@ -65,9 +65,12 @@ const updateAllMaterials = () => {
       child instanceof THREE.Mesh &&
       child.material instanceof THREE.MeshStandardMaterial
     ) {
-      console.log("child", child);
+      // console.log("child", child);
       //   child.material.envMap = enviromentMap;
       child.material.envMapIntensity = debugObject.envMapIntensity;
+      child.material.needsUpdate = true;
+      child.castShadow = true;
+      child.receiveShadow = true;
     }
   });
 };
@@ -93,7 +96,15 @@ scene.environment = enviromentMap;
  */
 const directionalLight = new THREE.DirectionalLight("#ffffff", 3);
 directionalLight.position.set(0.25, 3, -2.25);
+directionalLight.castShadow = true;
+directionalLight.shadow.camera.far = 15;
+directionalLight.shadow.mapSize.set(256, 256);
 scene.add(directionalLight);
+
+const directionLightCameraHelper = new THREE.CameraHelper(
+  directionalLight.shadow.camera
+);
+scene.add(directionLightCameraHelper);
 
 gui
   .add(directionalLight, "intensity")
@@ -167,11 +178,31 @@ controls.enableDamping = true;
  */
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
+  antialias: true,
 });
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.physicallyCorrectLights = true;
 renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 3;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+gui
+  .add(renderer, "toneMapping", {
+    No: THREE.NoToneMapping,
+    Linear: THREE.LinearToneMapping,
+    Reinhard: THREE.ReinhardToneMapping,
+    Cineon: THREE.CineonToneMapping,
+    ACESFimic: THREE.ACESFilmicToneMapping,
+  })
+  .onFinishChange(() => {
+    renderer.toneMapping = Number(renderer.toneMapping);
+    updateAllMaterials();
+  });
+
+gui.add(renderer, "toneMappingExposure").min(0).max(10).step(0.001);
 
 /**
  * Animate
